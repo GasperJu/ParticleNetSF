@@ -23,11 +23,17 @@ if [ ${object} == "T" ];
 then
     mist_rates=("1p0" "0p5" "0p1") 
     #mist_rates=("1p0")
-    if [ ${year} == 2022 ];
+    if [ ${year} == "2022EE" ];
     then
       if [ ${version} == "Nominal" ];
       then
-	  WPs_FullVer_vs_QCD=(["1p0"]="0.60" ["0p5"]="0.80" ["0p1"]="0.90") #0: 1p0, 1: 0p5, 2: 0p1 #2015
+	WPs_FullVer_vs_QCD=(["1p0"]="0.698" ["0p5"]="0.866" ["0p1"]="0.980") #0: 1p0, 1: 0p5, 2: 0p1 #2015
+      fi
+    elif [ ${year} == 2022 ];
+    then
+      if [ ${version} == "Nominal" ];
+      then
+        WPs_FullVer_vs_QCD=(["1p0"]="0.683" ["0p5"]="0.858" ["0p1"]="0.979") #0: 1p0, 1: 0p5, 2: 0p1
       fi
     elif [ ${year} == 2018 ];
     then
@@ -51,17 +57,29 @@ then
     fi
 elif [ ${object} == "W" ];
 then
-    if [ ${year} == 2022 ];
+    if [ ${year} == "2022EE" ];
     then
       if [ ${version} == "Nominal" ];
       then
         mist_rates=("5p0" "1p0" "0p5")
-        WPs_FullVer_vs_QCD=(["5p0"]="0.60" ["1p0"]="0.80" ["0p5"]="0.90") #0: 5p0, 1: 1p0, 2: 0p5
+        #mist_rates=("0p5")
+        WPs_FullVer_vs_QCD=(["5p0"]="0.750" ["1p0"]="0.957" ["0p5"]="0.979") #0: 5p0, 1: 1p0, 2: 0p5
       elif [ ${version} == "MD" ];     
       then
-        mist_rates=("2p5" "1p0" "0p5")
-        WPs_FullVer_vs_QCD=(["2p5"]="0.60" ["1p0"]="0.80" ["0p5"]="0.90") #0: 2p5, 1: 1p0, 2: 0p5
+        mist_rates=("2p5") # "1p0" "0p5")
+        WPs_FullVer_vs_QCD=(["2p5"]="0.830") # ["1p0"]="0.905" ["0p5"]="0.936") #0: 2p5, 1: 1p0, 2: 0p5
       fi 
+    elif [ ${year} == 2022 ];
+    then
+      if [ ${version} == "Nominal" ];
+      then
+        mist_rates=("5p0" "1p0" "0p5")
+        WPs_FullVer_vs_QCD=(["5p0"]="0.752" ["1p0"]="0.959" ["0p5"]="0.980") #0: 5p0, 1: 1p0, 2: 0p5
+      elif [ ${version} == "MD" ];
+      then
+        mist_rates=("2p5" "1p0" "0p5")
+        WPs_FullVer_vs_QCD=(["2p5"]="0.829" ["1p0"]="0.904" ["0p5"]="0.936") #0: 2p5, 1: 1p0, 2: 0p5
+      fi
     elif [ ${year} == 2018 ];
     then
       if [ ${version} == "Nominal" ];
@@ -114,9 +132,9 @@ do
       cmd_datacards=$(echo 'makeDatacards.C("'${era}'","tt1l","'${category}'","'${wpmin}'","1.00")')
       cmd_makefits=$(echo 'makeFits.C("'${era}'","'${category}'","'${wpmin}'","1.00","tt1l")')
      
-      root -l -q ${cmd_templates2d}
-      root -l -q ${cmd_templates1d}
-      root -l -q ${cmd_datacards}
+      #root -l -q ${cmd_templates2d}
+      #root -l -q ${cmd_templates1d}
+      #root -l -q ${cmd_datacards}
       root -l -q ${cmd_makefits} | tee ${object}_${year}_${version}_${wpmin}.txt
    done
 done

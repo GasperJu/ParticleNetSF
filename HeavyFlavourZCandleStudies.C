@@ -357,7 +357,7 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
     {
       std::cout << " sample = " << sample << " , category = " << category << "\n";
       processes.push_back("tp3"); processes.push_back("tp2"); processes.push_back("tp1"); processes.push_back("other"); processes.push_back("total");
-      colors.push_back(conf::tp3.color); colors.push_back(conf::tp2.color); colors.push_back(conf::tp1.color); colors.push_back(conf::other.color); colors.push_back(8);
+      colors.push_back(conf::tp3.color); colors.push_back(conf::tp2.color); colors.push_back(conf::tp1.color); colors.push_back(conf::other.color); colors.push_back(930); //gray <-  colors.push_back(8); green
       legends.push_back(conf::tp3.legend_name); legends.push_back(conf::tp2.legend_name); legends.push_back(conf::tp1.legend_name); legends.push_back(conf::other.legend_name); legends.push_back("Total SM");
     }
 
@@ -402,21 +402,21 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
   TH1F *h_r_postfit = getDataMCratio(h_data,h_postfit[numOfMC-1]); h_r_postfit->SetName("h_r_postfit_"+name+"_"+passOrFail);
   h_r_postfit->SetMarkerColor(1); h_r_postfit->SetLineColor(1);
 
-  TLegend* leg = new TLegend(0.50,0.62,0.94,0.90);
+  TLegend* leg = new TLegend(0.50,0.50,0.94,0.78);
   leg->SetNColumns(2);
   leg->SetFillStyle(0);
   leg->SetFillColor(0);
   leg->SetLineWidth(0);
   for (unsigned int i0=0; i0<h_prefit.size(); ++i0) { leg->AddEntry(h_postfit[i0],legends[i0],"L"); }
 
-  TPaveText *pt_cms = new TPaveText(0.11,0.77,0.4,0.9,"NDC");
+  TPaveText *pt_cms = new TPaveText(0.11,0.70,0.4,0.82,"NDC");
   pt_cms->SetFillStyle(0);
   pt_cms->SetFillColor(0);
   pt_cms->SetLineWidth(0);
   pt_cms->AddText("CMS");
   pt_cms->SetTextSize(0.08);
 
-  TPaveText *pt_preliminary = new TPaveText(0.2,0.63,0.4,0.9,"NDC");
+  TPaveText *pt_preliminary = new TPaveText(0.2,0.56,0.4,0.82,"NDC");
   pt_preliminary->SetFillStyle(0);
   pt_preliminary->SetFillColor(0);
   pt_preliminary->SetLineWidth(0);
@@ -426,14 +426,30 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
 
   TLatex pt_lumi;
   const char *longstring;
-  if (path2file.Contains("2016")) { longstring = "19.52 fb^{-1} (13 TeV)"; }
-  if (path2file.Contains("2017")) { longstring = "41.53 fb^{-1} (13 TeV)"; }
-  if (path2file.Contains("2018")) { longstring = "59.74 fb^{-1} (13 TeV)"; }
-  if (path2file.Contains("2022")) { longstring = "7.98  fb^{-1} (13 TeV)"; }
+  if (era.Contains("2016")) { longstring = "19.52 fb^{-1} (13 TeV)"; }
+  if (era.Contains("2017")) { longstring = "41.53 fb^{-1} (13 TeV)"; }
+  if (era.Contains("2018")) { longstring = "59.74 fb^{-1} (13 TeV)"; }
+  if (era.Contains("2022")) { longstring = "7.98  fb^{-1} (13.6 TeV)"; }
+  if (era.Contains("2022EE")) { longstring = "26.67  fb^{-1} (13.6 TeV)"; }  
   
+  //printf("%s\n",longstring);  
+  TString printableText = TString::Format("%s", (void*)longstring);
   pt_lumi.SetTextSize(0.07);
   pt_lumi.SetTextFont(42);
-  
+  pt_lumi.SetTextAlign(11);
+  //pt_lumi.DrawLatex(1-0.5,1-0.07,longstring);
+
+  // Add luminosity text
+  TPaveText *pave = new TPaveText(0.57, 0.92, 0.96, 0.90, "NDC");
+  pave->SetFillStyle(0);
+  pave->SetFillColor(0); // Transparent background
+  //pave->SetBorderSize(0); // No border
+  pave->SetLineWidth(0);
+  pave->AddText(printableText.Data());
+  pave->SetTextFont(42);
+  pave->SetTextSize(0.07);
+  pave->Draw();
+
   TString logstr = "lin"; if (log) { logstr = "log"; } 
   TCanvas *c = new TCanvas("c_"+name+"_"+category,"c_"+name+"_"+category,600,600); 
   c->SetName("c_"+name+"_"+category);
@@ -442,7 +458,7 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
   pMain->SetRightMargin(0.05);
   pMain->SetLeftMargin(0.17);
   pMain->SetBottomMargin(0.03);
-  pMain->SetTopMargin(0.05);
+  pMain->SetTopMargin(0.15);// before 0.05
   TPad *pRatio = new TPad("pRatio_"+name,"pRatio_"+name,0.0,0.03,1.0,0.37);
   pRatio->SetRightMargin(0.05);
   pRatio->SetLeftMargin(0.17);
@@ -457,6 +473,7 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
   if (h_prefit[numOfMC-1]->GetMaximum()>h_postfit[numOfMC-1]->GetMaximum()) { maxyld = h_prefit[numOfMC-1]->GetMaximum(); }
   if (log) { gPad->SetLogy(); h_prefit[numOfMC-1]->GetYaxis()->SetRangeUser(0.1,10.*maxyld); } else { h_prefit[numOfMC-1]->GetYaxis()->SetRangeUser(0.,1.8*maxyld); }
   h_prefit[numOfMC-1]->GetXaxis()->SetLabelSize(0.);
+  h_prefit[numOfMC-1]->GetYaxis()->SetTitleOffset(0.95);
   h_prefit[numOfMC-1]->GetYaxis()->SetTitle("Events / bin");
   h_prefit[numOfMC-1]->GetXaxis()->SetTitle(xaxisname);
   h_prefit[numOfMC-1]->Draw("HIST E0");
@@ -464,18 +481,33 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
   for (unsigned int i0=0; i0<h_postfit.size(); ++i0) { h_postfit[i0]->Draw("HIST E0 sames"); }
   h_data->Draw("P sames");
   leg->Draw("sames");
+
+  // Led for Data
+  leg->AddEntry(h_data,"Data","PL");
+  leg->AddEntry(h_prefit[h_prefit.size()-1], "Pre-fit","l");
+  leg->AddEntry(h_postfit[h_postfit.size()-1], "Post-fit","l");
+
+  // Force ALL legend lines to be black
+  //for (int i = 0; i < leg->GetListOfPrimitives()->GetSize(); ++i) {
+  //  TLegendEntry *entry = (TLegendEntry*)leg->GetListOfPrimitives()->At(i);
+  //  entry->SetLineColor(kBlack); // Override to black
+  //}
+  //leg->Draw();
+
+
   pt_cms->Draw("sames");
   pt_preliminary->Draw("sames");
+  pave->Draw("sames");
   std::cout << " i m here 12-d\n";
   std::cout << " i m here 12-e\n";
   c->RedrawAxis();
   pRatio->cd();
   
-  h_r_postfit->GetYaxis()->SetTitleOffset(0.9);
+  h_r_postfit->GetYaxis()->SetTitleOffset(0.5);
   h_r_postfit->GetYaxis()->SetTitleSize(0.1);
-  h_r_postfit->GetYaxis()->SetLabelSize(0.08);
-  h_r_postfit->GetXaxis()->SetTitleSize(0.2);
-  h_r_postfit->GetXaxis()->SetLabelSize(0.12);
+  h_r_postfit->GetYaxis()->SetLabelSize(0.10);
+  h_r_postfit->GetXaxis()->SetTitleSize(0.12);//0.2 
+  h_r_postfit->GetXaxis()->SetLabelSize(0.10);//before 0.12
   h_r_postfit->GetXaxis()->SetTitle(xaxisname);
 
   h_r_postfit->GetYaxis()->SetTitle("Data / Post-fit");

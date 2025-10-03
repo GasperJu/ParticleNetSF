@@ -28,9 +28,11 @@ void makeOneFitTop(std::string era, std::string category, std::string wpmin, std
   std::string txt2workspace     = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".txt --PO categories=tp2,tp3,tp1,other"; //For W-tag SFs
   
   std::string multidimfit       = "combine -M MultiDimFit -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root  --algo=singles --robustFit=1 --cminDefaultMinimizerTolerance 5.";
+// use --cminDefaultMinimizerTolerance 5.; --cminDefaultMinimizerStrategy 0
   
   std::string fitdiagnostics    = "combine -M FitDiagnostics -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root --saveShapes --saveWithUncertainties --robustFit=1 --cminDefaultMinimizerTolerance 5.";
-  
+// use --cminDefaultMinimizerTolerance 5.; --cminDefaultMinimizerStrategy 0
+
   std::string mvmultidimfitfile = "mv higgsCombineTest.MultiDimFit.mH125.root "+name1+"_sf/fitdir/multidimfit_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root";
   std::string mvfitdiagnostics  = "mv fitDiagnosticsTest.root "+name1+"_sf/fitdir/fitdiagnostics_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root";
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,15 +49,24 @@ void makeOneFitTop(std::string era, std::string category, std::string wpmin, std
   system(command_mvmultidimfitfile);
   system(command_mvfitdiagnostics);
   
-  // calculate impacts
-  std::string impacts_1 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --doInitialFit --robustFit 1 --exclude 'rgx{prop.*}'";
-  std::string impacts_2 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --robustFit 1 --doFits --parallel 60 --exclude 'rgx{prop.*}'";
+  //printf("MAKE JSON");  
+  // calculate impacts -- before no tolerance option
+  std::string impacts_1 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --doInitialFit --robustFit 1 --cminDefaultMinimizerTolerance 10 --exclude 'rgx{prop.*}'";
+  //printf("1: %s ", impacts_1.c_str());
+  std::string impacts_2 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --robustFit 1 --doFits --cminDefaultMinimizerTolerance 10 --parallel 60 --exclude 'rgx{prop.*}'";
+  //printf("2");
   std::string impacts_3 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 -o impacts.json --exclude 'rgx{prop.*}'";
-  std::string impacts_4 = "plotImpacts.py -i impacts.json -o impacts";
+  //printf("3: %s ", impacts_3.c_str());
+  std::string impacts_4 = "plotImpacts.py -i impacts.json -o impacts"; //--threshold -1
+  //printf("4");
   std::string impacts_5 = "mv impacts.pdf "+name1+"_sf/fitdir/impacts_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".pdf";
+  //printf("5");
   std::string impacts_6 = "mv impacts.json "+name1+"_sf/fitdir/impacts_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".json";
+  //printf("6");
   std::string impacts_7 = "mv combine_logger.out "+name1+"_sf/fitdir/combine_logger_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".out";
+  //printf("7");
   std::string impacts_8 = "python ../CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/data/tutorials/longexercise/diffNuisances.py "+name1+"_sf/fitdir/fitdiagnostics_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -A -g plots.root";
+  //printf("8");
   std::string impacts_9 = "mv plots.root "+name1+"_sf/fitdir/impact_plots_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root";
  
   const char *command_impacts1 = impacts_1.c_str();

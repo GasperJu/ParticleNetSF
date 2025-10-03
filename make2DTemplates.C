@@ -62,6 +62,7 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
   if (era == "2017") { path = conf::path_2017; intLumi= 41.53; }
   if (era == "2018") { path = conf::path_2018; intLumi= 59.74; }
   if (era == "2022") { path = conf::path_2022; intLumi= 7.98; }
+  if (era == "2022EE") { path = conf::path_2022EE; intLumi= 26.67; }
   ostringstream tmpLumi; tmpLumi << intLumi; TString lumi = tmpLumi.str();
 
 
@@ -79,8 +80,8 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
  
   TFile *fout = new TFile("./"+dirname1+"/"+nameoutfile+".root","RECREATE");
   
-  // Cuts and matching definition
-  TString cut_ = "(passmetfilters && passMuTrig && fj_1_pt>="+cutmin+" && fj_1_pt<"+cutmax+")";
+  // Cuts and matching definition -> ADDED VETOMAP == 0 IN CUT_ BUT INCREASED RANGE IMPACT PULLS
+  TString cut_ = "(passmetfilters && passMuTrig && fj_1_pt>="+cutmin+" && fj_1_pt<"+cutmax+")"; 
   TString c_base     = "(abs(fj_1_eta)<2.4 && fj_1_pt>=200. && leptonicW_pt>150.) && ("+cut_+")";
   TString c_incl     = c_base+" && "+cut_;
 
@@ -94,6 +95,8 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
   cuts.push_back(c_incl+" && "+c_p2);
   cuts.push_back(c_incl+" && "+c_p1);
 
+  std::cout << "Cut 0 " << cuts[0] << "\n";
+  
   // WP selection
   TString wp_val;
 
@@ -112,6 +115,7 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
   // Data histograms 
   TFile *f_data  = TFile::Open(path+"/data/singlemu_tree.root" , "READONLY");
   TTree *t_data  = (TTree*)f_data->Get("Events");
+  //printf(cuts[0]);
   TH2D *h_data_p = create2Dhisto(name,t_data,lumi,cuts[0]+" && "+cuts[4],brX,binsX,minX,maxX,brY,binsY,minY,maxY,false,"h_"+name+"_data_p",true);
   TH2D *h_data_f = create2Dhisto(name,t_data,lumi,cuts[0]+" && "+cuts[5],brX,binsX,minX,maxX,brY,binsY,minY,maxY,false,"h_"+name+"_data_f",true);
 

@@ -86,19 +86,19 @@ void makeOneDatacardTop(TString inputname, TString category, TString wpmin, TStr
   
   std::cout << "\n";
 
-  std::cout << "tp3jms       shapeU    1 - - -     1 - - - \n";  
-  std::cout << "tp2jms       shapeU    - 1 - -     - 1 - - \n";
-  std::cout << "tp1jms       shapeU    - - 1 -     - - 1 - \n";
-  std::cout << "otherjms     shapeU    - - - 1     - - - 1 \n";
+  std::cout << "tp3jms       shape    1 - - -     1 - - - \n";  
+  std::cout << "tp2jms       shape    - 1 - -     - 1 - - \n";
+  std::cout << "tp1jms       shape    - - 1 -     - - 1 - \n";
+  std::cout << "otherjms     shape    - - - 1     - - - 1 \n";
 
-  std::cout << "tp3jmr       shapeU    1 - - -     1 - - - \n";  
-  std::cout << "tp2jmr       shapeU    - 1 - -     - 1 - - \n";
-  std::cout << "tp1jmr       shapeU    - - 1 -     - - 1 - \n";
-  std::cout << "otherjmr     shapeU    - - - 1     - - - 1 \n";
+  std::cout << "tp3jmr       shape    1 - - -     1 - - - \n";  
+  std::cout << "tp2jmr       shape    - 1 - -     - 1 - - \n";
+  std::cout << "tp1jmr       shape    - - 1 -     - - 1 - \n";
+  std::cout << "otherjmr     shape    - - - 1     - - - 1 \n";
   
   std::cout << "pu          shape    1 1 1 1     1 1 1 1 \n";
-  std::cout << "jes         shape    1 1 1 1     1 1 1 1 \n";
-  std::cout << "jer         shape    1 1 1 1     1 1 1 1 \n";
+  //std::cout << "jes         shape    1 1 1 1     1 1 1 1 \n";
+  //std::cout << "jer         shape    1 1 1 1     1 1 1 1 \n";
   std::cout << "met         shape    1 1 1 1     1 1 1 1 \n";
   std::cout << "lhescalemuf shape    1 1 1 1     1 1 1 1 \n";
   std::cout << "lhescalemur shape    1 1 1 1     1 1 1 1 \n";
