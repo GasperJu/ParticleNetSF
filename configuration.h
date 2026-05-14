@@ -37,6 +37,8 @@ namespace conf {
   TString path_2017;
   TString path_2018;
   TString path_2022;
+  TString path_2023;
+  TString path_2023BPix;
 
   TString jetCone;
 
@@ -53,14 +55,19 @@ namespace conf {
 	path_2017 = "/eos/cms/store/group/phys_jetmet/lpaizano/Run2/2017/";
 	path_2018 = "/eos/cms/store/group/phys_jetmet/lpaizano/Run2/2018/";
 	path_2022 = "/eos/cms/store/group/phys_jetmet/lpaizano/Run3/2022/";
-	
+        // New DATASET
+        // /eos/user/j/jmhogan/NanoHRT_Run3/_ak8_muon_2023/
+        path_2023 = "/eos/user/j/jleite/EPR/NanoHRT_2023_Julie/2023/";
+        // /eos/user/j/jmhogan/NanoHRT_Run3/_ak8_muon_2023BPix/
+        path_2023BPix = "/eos/user/j/jleite/EPR/NanoHRT_2023_Julie/2023BPix/";	
+
 	jetCone    = "ak8";
 	jet_prefix = "fj_1_";
       
 	brX = jet_prefix+"sdmass"; 
 	brY = jet_prefix+"pt";
-	//category = "top"; //Top-Tagger
-	category = "w"; //W-Tagger
+	category = "top"; //Top-Tagger
+	//category = "w"; //W-Tagger
 	
 	processes.clear();
 	process_names.clear();
@@ -88,8 +95,8 @@ namespace conf {
 	syst.push_back("jes"); 
 	syst.push_back("jer");
 	syst.push_back("met"); 
-	syst.push_back("jms");
-	syst.push_back("jmr");
+	//syst.push_back("jms");
+	//syst.push_back("jmr");
 	syst.push_back("lhescalemuf"); 
 	syst.push_back("lhescalemur"); 
 
@@ -97,49 +104,56 @@ namespace conf {
       }
     
 
-    //algo      = "particlenet"; //Nominal
-    algo      = "particlenetmd";  //MD
-    //score_def = jet_prefix+"ParticleNet_TvsQCD"; 
-    //score_def = jet_prefix+"ParticleNet_WvsQCD"; //W-Nominal
-    score_def = "(fj_1_ParticleNetMD_Xcc+fj_1_ParticleNetMD_Xqq)/(fj_1_ParticleNetMD_Xcc+fj_1_ParticleNetMD_Xqq+fj_1_ParticleNetMD_QCD)"; //W-MD
+    algo      = "particlenet"; //Nominal
+    //algo      = "particlenetmd";  //MD
+    score_def = jet_prefix+"particleNetWithMass_TvsQCD"; 
+    //score_def = jet_prefix+"particleNetWithMass_WvsQCD"; //W-Nominal 
+    // "ParticleNet_WvsQCD"; (2022 and later)
+    //score_def = "(fj_1_particleNet_XccVsQCD+fj_1_particleNet_XqqVsQCD)/(fj_1_particleNet_XccVsQCD+fj_1_particleNet_XqqVsQCD+fj_1_particleNet_QCD)"; //W-MD
     binsX = 34; minX = 50;  maxX = 220.;
-    //binsY = 40; minY = 200; maxY = 1200.; //Top-Tagger
-    binsY = 40; minY = 200; maxY = 800.; //W-Tagger
+    binsY = 40; minY = 200; maxY = 1200.; //Top-Tagger
+    //binsY = 40; minY = 200; maxY = 800.; //W-Tagger
     
     // Top
+    name.push_back("pt200to300"); ptmin.push_back(200.); ptmax.push_back(300.);
     //name.push_back("pt300to400"); ptmin.push_back(300.); ptmax.push_back(400.);
-    //name.push_back("pt400to480"); ptmin.push_back(400.); ptmax.push_back(480.);  
-    //name.push_back("pt480to600"); ptmin.push_back(480.); ptmax.push_back(600.);   
-    //name.push_back("pt600to1200"); ptmin.push_back(600.); ptmax.push_back(1200.);
+      //name.push_back("pt400to480"); ptmin.push_back(400.); ptmax.push_back(480.);  
+      //name.push_back("pt480to600"); ptmin.push_back(480.); ptmax.push_back(600.);   
+      //name.push_back("pt600to1200"); ptmin.push_back(600.); ptmax.push_back(1200.);
+    //name.push_back("pt400to500"); ptmin.push_back(400.); ptmax.push_back(500.);
+    //name.push_back("pt500to600"); ptmin.push_back(500.); ptmax.push_back(600.);
+    //name.push_back("pt600to800"); ptmin.push_back(600.); ptmax.push_back(800.);
+    //name.push_back("pt800to1200"); ptmin.push_back(800.); ptmax.push_back(1200.);
     //name.push_back("200to1200"); ptmin.push_back(200.); ptmax.push_back(1200.);
-    
+
     //W
     //name.push_back("pt200to300"); ptmin.push_back(200.); ptmax.push_back(300.);
     //name.push_back("pt300to400"); ptmin.push_back(300.); ptmax.push_back(400.);  
     //name.push_back("pt400to800"); ptmin.push_back(400.); ptmax.push_back(800.);
-    name.push_back("pt200to800"); ptmin.push_back(200.); ptmax.push_back(800.);
+    //name.push_back("pt200to800"); ptmin.push_back(200.); ptmax.push_back(800.);
     
     // =================== end of area to modify - tune ===================== //
 
+    //NEW
     qcd.name        = "qcd";
     qcd.legend_name = "QCD";
     qcd.color       = 92;
     
     tp2.name        = "tp2";
     tp2.legend_name = "W-merged";
-    tp2.color       = 7;
+    tp2.color       = 8; 	//7; Tiffany Blue
     
     tp3.name        = "tp3";
     tp3.legend_name = "Top-merged";
-    tp3.color       = 4;
+    tp3.color       = 806;      //4; Ocean Blue
     
     tp1.name        = "tp1";
     tp1.legend_name = "Non-merged";
-    tp1.color       = 595;
+    tp1.color       = 633;      //595; Purple Grey
     
     other.name        = "other";
     other.legend_name = "Other";
-    other.color       = 6;
+    other.color       = 878;	//6; Pink
  
   }   
 

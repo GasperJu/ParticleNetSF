@@ -430,7 +430,9 @@ void makeDataMCPlotFromCombine(TString path2file, TString era, TString category,
   if (path2file.Contains("2017")) { longstring = "41.53 fb^{-1} (13 TeV)"; }
   if (path2file.Contains("2018")) { longstring = "59.74 fb^{-1} (13 TeV)"; }
   if (path2file.Contains("2022")) { longstring = "7.98  fb^{-1} (13 TeV)"; }
-  
+  if (path2file.Contains("2023")) { longstring = "17.96  fb^{-1} (13.6 TeV)"; }
+  if (path2file.Contains("2023BPix")) { longstring = "9.68  fb^{-1} (13.6 TeV)"; }  
+
   pt_lumi.SetTextSize(0.07);
   pt_lumi.SetTextFont(42);
   

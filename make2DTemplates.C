@@ -15,7 +15,9 @@
 
 TH2D *create2Dhisto(TString sample, TTree *tree,TString intLumi,TString cuts,TString branchX,int binsX,float minX,float maxX,TString branchY,int binsY,float minY,float maxY,bool useLog,TString name,bool data);
 
-void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin, TString wpmax, TString score="fj_1_ParticleNetMD_XbbVsQCD", TString cutmin="0==0", TString cutmax="0==0", TString suffix="none");
+// 2023   fj_1_particleNet_XbbVsQCD
+// 2022   fj_1_ParticleNetMD_XbbVsQCD
+void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin, TString wpmax, TString score="fj_1_particleNet_XbbVsQCD", TString cutmin="0==0", TString cutmax="0==0", TString suffix="none");
 
 void makeMCHistosTop(TString name, TString path, std::vector<TString> processes, std::vector<TString> process_names, TString sys, TString sysType, TString wgts, std::vector<TString> cuts, TString brX, int binsX, float minX, float maxX, TString brY, int binsY, float minY, float maxY, TFile *f_);
 
@@ -40,7 +42,9 @@ void make2DTemplates(TString sample, TString era, TString wpmin, TString wpmax)
     }
 }
 
-void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin, TString wpmax, TString score="fj_1_ParticleNetMD_XbbVsQCD", 
+// 2023   fj_1_particleNet_XbbVsQCD
+// 2022   fj_1_ParticleNetMD_XbbVsQCD
+void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin, TString wpmax, TString score="fj_1_particleNet_XbbVsQCD", 
 		      TString cutmin="0==0", TString cutmax="0==0", TString suffix="none") {
 
   setTDRStyle();
@@ -62,14 +66,20 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
   if (era == "2017") { path = conf::path_2017; intLumi= 41.53; }
   if (era == "2018") { path = conf::path_2018; intLumi= 59.74; }
   if (era == "2022") { path = conf::path_2022; intLumi= 7.98; }
+  // 2023BPix  
+  if (era == "2023") { path = conf::path_2023; intLumi= 17.96; }
+  if (era == "2023BPix") { path = conf::path_2023BPix; intLumi= 9.68; }
   ostringstream tmpLumi; tmpLumi << intLumi; TString lumi = tmpLumi.str();
-
 
   // Directory to store the templates   
   TString dirname1 = "templates2D";
   TString name0;
-  if (score.Contains("ParticleNetMD"))      { name0 = "particlenetmd"; }
-  else if (score.Contains("ParticleNet"))   { name0 = "particlenet"; }
+  
+  //2023   fj_1_particleNet_XbbVsQCD
+  //2022   fj_1_ParticleNetMD_XbbVsQCD
+  // ParticleNet -> particleNet
+  if (score.Contains("particleNet"))      { name0 = "particlenetmd"; }
+  else if (score.Contains("particleNetWithMass"))   { name0 = "particlenet"; }
 
   TString nameoutfile = conf::algo+"_tt1l_"+cat+"_"+wpmin+"to"+wpmax+"_"+era+"_"+cutmin+"to"+cutmax+"_templates";
   std::cout << " 2D templates name: " << nameoutfile << "\n";
@@ -108,9 +118,16 @@ void makeTemplatesTop(TString path2file, TString era, TString cat, TString wpmin
   TString brY = conf::brY; int binsY = conf::binsY; float minY = conf::minY;  float maxY = conf::maxY;
   TString name = path2file+"_"+name0+"_"+cat+"_"+wpmin+"to"+wpmax+"_"+era;
 
-  
+  std::cout << path << std::endl;
+  std::cout << "Opening file: [" << path+"data/singlemu_tree.root" << "]" << std::endl;
+
   // Data histograms 
   TFile *f_data  = TFile::Open(path+"/data/singlemu_tree.root" , "READONLY");
+  if (!f_data || f_data->IsZombie()) {
+    std::cerr << "ERROR: could not open file!" << std::endl;
+  }
+
+  std::cout << "hi" << std::endl;
   TTree *t_data  = (TTree*)f_data->Get("Events");
   TH2D *h_data_p = create2Dhisto(name,t_data,lumi,cuts[0]+" && "+cuts[4],brX,binsX,minX,maxX,brY,binsY,minY,maxY,false,"h_"+name+"_data_p",true);
   TH2D *h_data_f = create2Dhisto(name,t_data,lumi,cuts[0]+" && "+cuts[5],brX,binsX,minX,maxX,brY,binsY,minY,maxY,false,"h_"+name+"_data_f",true);
@@ -219,6 +236,8 @@ TH2D *create2Dhisto(TString sample, TTree *tree,TString intLumi,TString cuts,TSt
 
   TH1::SetDefaultSumw2(kTRUE);
   
+  std::cout << name << std::endl;  
+
   TString puWgt;
   if (name.Contains("puUp"))        { puWgt = "puWeightUp"; }
   else if (name.Contains("puDown")) { puWgt = "puWeightDown"; }
@@ -230,6 +249,8 @@ TH2D *create2Dhisto(TString sample, TTree *tree,TString intLumi,TString cuts,TSt
   TString ttWgt     = "1."; if (sample.Contains("tt1l")) { ttWgt = "topptWeight"; };
 
   conf::configuration(sample);
+  
+  std::cout << sample << std::endl;
   
   TString cut;
   if (data) { cut ="("+cuts+")"; } 

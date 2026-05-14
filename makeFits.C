@@ -23,14 +23,20 @@ void makeFits(std::string era, std::string category, std::string wpmin, std::str
 
 
 void makeOneFitTop(std::string era, std::string category, std::string wpmin, std::string wpmax, std::string name, std::string name1) {
-  
-  //std::string txt2workspace     = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".txt --PO categories=tp3,tp2,tp1,other"; //For top-tag SFs
-  std::string txt2workspace     = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".txt --PO categories=tp2,tp3,tp1,other"; //For W-tag SFs
-  
-  std::string multidimfit       = "combine -M MultiDimFit -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root  --algo=singles --robustFit=1 --cminDefaultMinimizerTolerance 5.";
-  
-  std::string fitdiagnostics    = "combine -M FitDiagnostics -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root --saveShapes --saveWithUncertainties --robustFit=1 --cminDefaultMinimizerTolerance 5.";
-  
+  //printf("1"); 
+  std::string txt2workspace     = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".txt --PO categories=tp3,tp2,tp1,other"; //For top-tag SFs
+  //std::string txt2workspace     = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".txt --PO categories=tp2,tp3,tp1,other"; //For W-tag SFs
+  //printf("2");
+  std::string multidimfit       = "combine -M MultiDimFit -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root  --algo=singles \
+  --redefineSignalPOIs SF_tp1,SF_tp2,SF_tp3,SF_other \
+  --setParameters SF_tp1=1,SF_tp2=1,SF_tp3=1,SF_other=1 \ 
+  --setParameterRanges SF_tp1=0,4:SF_tp2=0,4:SF_tp3=0,4:SF_other=0,4 \
+--robustFit=1 --cminDefaultMinimizerTolerance 10 --cminDefaultMinimizerStrategy 0";
+//added --setParameters r=1; change --cminDefaultMinimizerTolerance 5. to 10
+  //printf("3");
+  std::string fitdiagnostics    = "combine -M FitDiagnostics -m 125 "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root --saveShapes --saveWithUncertainties --robustFit=1 --cminDefaultMinimizerTolerance 10 --cminDefaultMinimizerStrategy 0";
+//added --setParameters r=1; ; change --cminDefaultMinimizerTolerance 5. to 10
+  //printf("4");
   std::string mvmultidimfitfile = "mv higgsCombineTest.MultiDimFit.mH125.root "+name1+"_sf/fitdir/multidimfit_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root";
   std::string mvfitdiagnostics  = "mv fitDiagnosticsTest.root "+name1+"_sf/fitdir/fitdiagnostics_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root";
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,9 +53,18 @@ void makeOneFitTop(std::string era, std::string category, std::string wpmin, std
   system(command_mvmultidimfitfile);
   system(command_mvfitdiagnostics);
   
-  // calculate impacts
-  std::string impacts_1 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --doInitialFit --robustFit 1 --exclude 'rgx{prop.*}'";
-  std::string impacts_2 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --robustFit 1 --doFits --parallel 60 --exclude 'rgx{prop.*}'";
+  // calculate impacts -- with tolerance option to create missing JSON files
+  // added --setParameters r=1 to impact 1 and 2; --named tp3jms -v 3
+  std::string impacts_1 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --doInitialFit \
+  --redefineSignalPOIs SF_tp1,SF_tp2,SF_tp3,SF_other \
+  --setParameters SF_tp1=1,SF_tp2=1,SF_tp3=1,SF_other=1 \ 
+  --setParameterRanges SF_tp1=0,4:SF_tp2=0,4:SF_tp3=0,4:SF_other=0,4 \
+--robustFit 1 --cminDefaultMinimizerTolerance 10 --exclude 'rgx{prop.*}'";
+  std::string impacts_2 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 --robustFit 1 --doFits \
+  --redefineSignalPOIs SF_tp1,SF_tp2,SF_tp3,SF_other \
+  --setParameters SF_tp1=1,SF_tp2=1,SF_tp3=1,SF_other=1 \ 
+  --setParameterRanges SF_tp1=0,4:SF_tp2=0,4:SF_tp3=0,4:SF_other=0,4 \
+--cminDefaultMinimizerTolerance 10 --parallel 60 --exclude 'rgx{prop.*}'";
   std::string impacts_3 = "combineTool.py -M Impacts -d "+name1+"_sf/fitdir/datacard_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".root -m 125 -o impacts.json --exclude 'rgx{prop.*}'";
   std::string impacts_4 = "plotImpacts.py -i impacts.json -o impacts";
   std::string impacts_5 = "mv impacts.pdf "+name1+"_sf/fitdir/impacts_"+name1+"_tt1l_"+category+"_"+wpmin+"to"+wpmax+"_"+era+"_"+name+".pdf";
